@@ -330,7 +330,7 @@ bool QNX_GLES_SwapWindow(SDL_VideoDevice *_this, SDL_Window *window)
             //     .none = EGL_NONE
             // };
 
-            if (!SDL_EGL_MakeCurrent(_this, EGL_NO_SURFACE, impl->context) {
+            if (!SDL_EGL_MakeCurrent(_this, EGL_NO_SURFACE, impl->context)) {
                 return false;
             }
             SDL_EGL_DestroySurface(_this, impl->egl_surface);
@@ -340,7 +340,7 @@ bool QNX_GLES_SwapWindow(SDL_VideoDevice *_this, SDL_Window *window)
                 return false;
             }
 
-            if (!SDL_EGL_MakeCurrent(_this, surface, impl->context) {
+            if (!SDL_EGL_MakeCurrent(_this, surface, impl->context)) {
                 return false;
             }
 
