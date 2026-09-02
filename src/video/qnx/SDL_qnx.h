@@ -70,7 +70,7 @@ extern bool QNX_GLES_LoadLibrary(SDL_VideoDevice *_this, const char *egl_path);
 extern SDL_FunctionPointer QNX_GLES_GetProcAddress(SDL_VideoDevice *_this, const char *proc);
 extern SDL_GLContext QNX_GLES_CreateContext(SDL_VideoDevice *_this, SDL_Window *window);
 extern bool QNX_GLES_SetSwapInterval(SDL_VideoDevice *_this, int interval);
-extern bool QNX_GLES_GetSwapInterval(SDL_VideoDevice *_this, int interval);
+extern bool QNX_GLES_GetSwapInterval(SDL_VideoDevice *_this, int *interval);
 extern bool QNX_GLES_SwapWindow(SDL_VideoDevice *_this, SDL_Window *window);
 extern bool QNX_GLES_MakeCurrent(SDL_VideoDevice *_this, SDL_Window * window, SDL_GLContext context);
 extern bool QNX_GLES_DeleteContext(SDL_VideoDevice *_this, SDL_GLContext context);
