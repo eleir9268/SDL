@@ -288,6 +288,24 @@ SDL_FunctionPointer QNX_GLES_GetProcAddress(SDL_VideoDevice *_this, const char *
 // }
 
 /**
+ * Associates the given window with the necessary EGL structures for drawing and
+ * displaying content.
+ * @param   SDL_VideoDevice *_this
+ * @param   window  The SDL window to create the context for
+ * @return  A pointer to the created context, if successful, NULL on error
+ */
+SDL_GLContext QNX_GLES_CreateContext(SDL_VideoDevice *_this, SDL_Window *window)
+{
+    SDL_WindowData   *impl = (SDL_WindowData *)window->internal;
+    EGLContext      context;
+
+    context = SDL_EGL_CreateContext(_this, window);
+    impl->context = context;
+
+    return context;
+}
+
+/**
  * Sets a new value for the number of frames to display before swapping buffers.
  * @param   SDL_VideoDevice *_this
  * @param   interval    New interval value
@@ -372,4 +390,3 @@ void QNX_GLES_UnloadLibrary(SDL_VideoDevice *_this)
 }
 
 SDL_EGL_MakeCurrent_impl(QNX)
-SDL_EGL_CreateContext_impl(QNX)
