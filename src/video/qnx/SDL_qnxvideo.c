@@ -21,6 +21,7 @@
 
 #include "SDL_internal.h"
 #include "../SDL_sysvideo.h"
+#include "../SDL_egl_c.h"
 #include "../../events/SDL_keyboard_c.h"
 #include "../../events/SDL_mouse_c.h"
 #include "../../events/SDL_windowevents_c.h"
