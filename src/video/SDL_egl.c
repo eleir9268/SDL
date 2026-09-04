@@ -29,6 +29,10 @@
 #include <android/native_window.h>
 #include "../video/android/SDL_androidvideo.h"
 #endif
+#ifdef SDL_VIDEO_DRIVER_QNX
+#include <screen/screen.h>
+#include "../video/qnx/SDL_qnx.h"
+#endif
 #ifdef SDL_VIDEO_DRIVER_RPI
 #include <unistd.h>
 #endif
@@ -1271,6 +1275,9 @@ EGLSurface SDL_EGL_CreateSurface(SDL_VideoDevice *_this, SDL_Window *window, Nat
     EGLint format_wanted;
     EGLint format_got;
 #endif
+#ifdef SDL_VIDEO_DRIVER_QNX
+    int format;
+#endif
     // max 16 key+value pairs, plus terminator.
     EGLint attribs[33];
     int attr = 0;
@@ -1293,9 +1300,12 @@ EGLSurface SDL_EGL_CreateSurface(SDL_VideoDevice *_this, SDL_Window *window, Nat
 #endif
 
 #ifdef SDL_VIDEO_DRIVER_QNX
-    // Under screen, dual-buffered is not automatic.
-    attribs[attr++] = EGL_RENDER_BUFFER;
-    attribs[attr++] = EGL_BACK_BUFFER;
+    format = QNX_ChooseFormat(_this, _this->egl_data->egl_config);
+
+    if (screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_FORMAT,
+                                      &format) < 0) {
+        return EGL_NO_SURFACE;
+    }
 #endif
 
 #ifdef EGL_KHR_gl_colorspace

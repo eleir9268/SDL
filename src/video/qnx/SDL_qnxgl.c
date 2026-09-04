@@ -139,7 +139,7 @@ static EGLConfig chooseConfig(SDL_VideoDevice *_this, struct DummyConfig dummyCo
  * @param   egl_conf    EGL configuration to use
  * @return  A SCREEN_FORMAT* constant for the pixel format to use
  */
-static int chooseFormat(SDL_VideoDevice *_this, EGLConfig egl_conf)
+int QNX_ChooseFormat(SDL_VideoDevice *_this, EGLConfig egl_conf)
 {
     EGLint buffer_bit_depth;
     EGLint alpha_bit_depth;
@@ -217,7 +217,7 @@ bool glInitConfig(SDL_VideoDevice *_this, SDL_WindowData *impl, int *pformat)
 
     dummyconfig = getDummyConfigFromScreenSettings(*pformat);
     _this->egl_data->egl_config = chooseConfig(_this, dummyconfig, egl_configs, egl_num_configs);
-    *pformat = chooseFormat(_this, _this->egl_data->egl_config);
+    *pformat = QNX_ChooseFormat(_this, _this->egl_data->egl_config);
 
     SDL_free(egl_configs);
 

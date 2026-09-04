@@ -84,4 +84,6 @@ extern bool QNX_SetDisplayMode(SDL_VideoDevice *_this, SDL_VideoDisplay *display
 extern void initMouse(SDL_VideoDevice *_this);
 extern void quitMouse(SDL_VideoDevice *_this);
 
+extern int QNX_ChooseFormat(SDL_VideoDevice *_this, EGLConfig egl_conf)
+
 #endif

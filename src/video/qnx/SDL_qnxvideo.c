@@ -262,12 +262,6 @@ static bool QNX_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_Pro
     // Initialized in QNX_VideoInit()
     SDL_assert(display_data != NULL);
 
-    // Set pixel format.
-    if (screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_FORMAT,
-                                      &format) < 0) {
-        goto fail;
-    }
-
     // Create buffer(s).
     if (screen_create_window_buffers(impl->window, numbufs>0?numbufs:1) < 0) {
         goto fail;
