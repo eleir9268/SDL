@@ -24,195 +24,205 @@
 
 #include "../SDL_egl_c.h"
 
-// static EGLDisplay   egl_disp;
+struct DummyConfig
+{
+    int red_size;
+    int green_size;
+    int blue_size;
+    int alpha_size;
+    int native_id;
+};
 
-// struct DummyConfig
-// {
-//     int red_size;
-//     int green_size;
-//     int blue_size;
-//     int alpha_size;
-//     int native_id;
-// };
+static struct DummyConfig getDummyConfigFromScreenSettings(int format)
+{
+    struct DummyConfig dummyConfig= {};
 
-// static struct DummyConfig getDummyConfigFromScreenSettings(int format)
-// {
-//     struct DummyConfig dummyConfig= {};
+    dummyConfig.native_id = format;
+    switch (format) {
+        case SCREEN_FORMAT_RGBX4444:
+            dummyConfig.red_size = 4;
+            dummyConfig.green_size = 4;
+            dummyConfig.blue_size = 4;
+            dummyConfig.alpha_size = 4;
+            break;
+        case SCREEN_FORMAT_RGBA5551:
+            dummyConfig.red_size = 5;
+            dummyConfig.green_size = 5;
+            dummyConfig.blue_size = 5;
+            dummyConfig.alpha_size = 1;
+            break;
+        case SCREEN_FORMAT_RGB565:
+            dummyConfig.red_size = 5;
+            dummyConfig.green_size = 6;
+            dummyConfig.blue_size = 5;
+            dummyConfig.alpha_size = 0;
+            break;
+        case SCREEN_FORMAT_RGB888:
+            dummyConfig.red_size = 8;
+            dummyConfig.green_size = 8;
+            dummyConfig.blue_size = 8;
+            dummyConfig.alpha_size = 0;
+            break;
+        case SCREEN_FORMAT_BGRA8888:
+        case SCREEN_FORMAT_BGRX8888:
+        case SCREEN_FORMAT_RGBA8888:
+        case SCREEN_FORMAT_RGBX8888:
+            dummyConfig.red_size = 8;
+            dummyConfig.green_size = 8;
+            dummyConfig.blue_size = 8;
+            dummyConfig.alpha_size = 8;
+            break;
+        default:
+            break;
+    }
+    return dummyConfig;
+}
 
-//     dummyConfig.native_id = format;
-//     switch (format) {
-//          case SCREEN_FORMAT_RGBX4444:
-//             dummyConfig.red_size = 4;
-//             dummyConfig.green_size = 4;
-//             dummyConfig.blue_size = 4;
-//             dummyConfig.alpha_size = 4;
-//             break;
-//          case SCREEN_FORMAT_RGBA5551:
-//             dummyConfig.red_size = 5;
-//             dummyConfig.green_size = 5;
-//             dummyConfig.blue_size = 5;
-//             dummyConfig.alpha_size = 1;
-//             break;
-//          case SCREEN_FORMAT_RGB565:
-//             dummyConfig.red_size = 5;
-//             dummyConfig.green_size = 6;
-//             dummyConfig.blue_size = 5;
-//             dummyConfig.alpha_size = 0;
-//             break;
-//          case SCREEN_FORMAT_RGB888:
-//             dummyConfig.red_size = 8;
-//             dummyConfig.green_size = 8;
-//             dummyConfig.blue_size = 8;
-//             dummyConfig.alpha_size = 0;
-//             break;
-//             case SCREEN_FORMAT_BGRA8888:
-//             case SCREEN_FORMAT_BGRX8888:
-//             case SCREEN_FORMAT_RGBA8888:
-//          case SCREEN_FORMAT_RGBX8888:
-//             dummyConfig.red_size = 8;
-//             dummyConfig.green_size = 8;
-//             dummyConfig.blue_size = 8;
-//             dummyConfig.alpha_size = 8;
-//             break;
-//             default:
-//                 break;
-//     }
-//     return dummyConfig;
-// }
+static EGLConfig chooseConfig(SDL_VideoDevice *_this, struct DummyConfig dummyConfig, EGLConfig* egl_configs, EGLint egl_num_configs)
+{
+    EGLConfig glConfig = (EGLConfig)0;
 
-// static EGLConfig chooseConfig(struct DummyConfig dummyConfig, EGLConfig* egl_configs, EGLint egl_num_configs)
-// {
-//    EGLConfig glConfig = (EGLConfig)0;
+    for (size_t ii = 0; ii < egl_num_configs; ii++) {
+        EGLint val;
 
-//     for (size_t ii = 0; ii < egl_num_configs; ii++) {
-//         EGLint val;
+        _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display, egl_configs[ii], EGL_SURFACE_TYPE, &val);
+        if (!(val & EGL_WINDOW_BIT)) {
+            continue;
+        }
 
-//         eglGetConfigAttrib(egl_disp, egl_configs[ii], EGL_SURFACE_TYPE, &val);
-//         if (!(val & EGL_WINDOW_BIT)) {
-//             continue;
-//         }
+        _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display, egl_configs[ii], EGL_RENDERABLE_TYPE, &val);
+        if (!(val & EGL_OPENGL_ES2_BIT)) {
+            continue;
+        }
 
-//         eglGetConfigAttrib(egl_disp, egl_configs[ii], EGL_RENDERABLE_TYPE, &val);
-//         if (!(val & EGL_OPENGL_ES2_BIT)) {
-//             continue;
-//         }
+        _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display, egl_configs[ii], EGL_DEPTH_SIZE, &val);
+        if (val == 0) {
+            continue;
+        }
 
-//         eglGetConfigAttrib(egl_disp, egl_configs[ii], EGL_DEPTH_SIZE, &val);
-//         if (val == 0) {
-//             continue;
-//         }
+        _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display, egl_configs[ii], EGL_RED_SIZE, &val);
+        if (val != dummyConfig.red_size) {
+            continue;
+        }
 
-//         eglGetConfigAttrib(egl_disp, egl_configs[ii], EGL_RED_SIZE, &val);
-//         if (val != dummyConfig.red_size) {
-//            continue;
-//         }
+        _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display, egl_configs[ii], EGL_GREEN_SIZE, &val);
+        if (val != dummyConfig.green_size) {
+            continue;
+        }
 
-//         eglGetConfigAttrib(egl_disp, egl_configs[ii], EGL_GREEN_SIZE, &val);
-//         if (val != dummyConfig.green_size) {
-//            continue;
-//         }
+        _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display, egl_configs[ii], EGL_BLUE_SIZE, &val);
+        if (val != dummyConfig.blue_size) {
+            continue;
+        }
 
-//         eglGetConfigAttrib(egl_disp, egl_configs[ii], EGL_BLUE_SIZE, &val);
-//         if (val != dummyConfig.blue_size) {
-//            continue;
-//         }
+        _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display, egl_configs[ii], EGL_ALPHA_SIZE, &val);
+        if (val != dummyConfig.alpha_size) {
+            continue;
+        }
+        if(!glConfig)
+        {
+            glConfig = egl_configs[ii];
+        }
 
-//         eglGetConfigAttrib(egl_disp, egl_configs[ii], EGL_ALPHA_SIZE, &val);
-//         if (val != dummyConfig.alpha_size) {
-//             continue;
-//         }
-//         if(!glConfig)
-//         {
-//             glConfig = egl_configs[ii];
-//         }
+        _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display, egl_configs[ii], EGL_NATIVE_VISUAL_ID, &val);
+        if ((val != 0) && (val == dummyConfig.native_id)) {
+            return egl_configs[ii];
+        }
+    }
+    return glConfig;
+}
 
-//         eglGetConfigAttrib(egl_disp, egl_configs[ii], EGL_NATIVE_VISUAL_ID, &val);
-//         if ((val != 0) && (val == dummyConfig.native_id)) {
-//             return egl_configs[ii];
-//         }
-//     }
-//     return glConfig;
-// }
+/**
+ * Detertmines the pixel format to use based on the current display and EGL
+ * configuration.
+ *
+ * @param   egl_conf    EGL configuration to use
+ * @return  A SCREEN_FORMAT* constant for the pixel format to use
+ */
+static int chooseFormat(SDL_VideoDevice *_this, EGLConfig egl_conf)
+{
+    EGLint buffer_bit_depth;
+    EGLint alpha_bit_depth;
 
-// /**
-//  * Detertmines the pixel format to use based on the current display and EGL
-//  * configuration.
-//  * @param   egl_conf    EGL configuration to use
-//  * @return  A SCREEN_FORMAT* constant for the pixel format to use
-//  */
-// static int chooseFormat(EGLConfig egl_conf)
-// {
-//     EGLint buffer_bit_depth;
-//     EGLint alpha_bit_depth;
+    _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display, egl_conf, EGL_BUFFER_SIZE, &buffer_bit_depth);
+    _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display, egl_conf, EGL_ALPHA_SIZE, &alpha_bit_depth);
 
-//     eglGetConfigAttrib(egl_disp, egl_conf, EGL_BUFFER_SIZE, &buffer_bit_depth);
-//     eglGetConfigAttrib(egl_disp, egl_conf, EGL_ALPHA_SIZE, &alpha_bit_depth);
+    switch (buffer_bit_depth) {
+        case 32:
+            return SCREEN_FORMAT_RGBX8888;
+        case 24:
+            return SCREEN_FORMAT_RGB888;
+        case 16:
+            switch (alpha_bit_depth) {
+                case 4:
+                    return SCREEN_FORMAT_RGBX4444;
+                case 1:
+                    return SCREEN_FORMAT_RGBA5551;
+                default:
+                    return SCREEN_FORMAT_RGB565;
+            }
+        default:
+            return 0;
+    }
+}
 
-//     switch (buffer_bit_depth) {
-//         case 32:
-//             return SCREEN_FORMAT_RGBX8888;
-//         case 24:
-//             return SCREEN_FORMAT_RGB888;
-//         case 16:
-//             switch (alpha_bit_depth) {
-//                 case 4:
-//                     return SCREEN_FORMAT_RGBX4444;
-//                 case 1:
-//                     return SCREEN_FORMAT_RGBA5551;
-//                 default:
-//                     return SCREEN_FORMAT_RGB565;
-//             }
-//         default:
-//             return 0;
-//     }
-// }
+/**
+ * Enumerates the supported EGL configurations and chooses a suitable one.
+ *
+ * In screen, the window format trumps the EGL format, so we can't let SDL
+ * determine its preferred format, and propagate that to screen.
+ *
+ * @param[out]  pformat The chosen pixel format
+ * @return true if successful, false on error
+ */
+bool glInitConfig(SDL_VideoDevice *_this, SDL_WindowData *impl, int *pformat)
+{
+    EGLConfig *egl_configs;
+    EGLint egl_num_configs;
+    EGLBoolean rc;
+    struct DummyConfig dummyconfig = {};
 
-// /**
-//  * Enumerates the supported EGL configurations and chooses a suitable one.
-//  * @param[out]  pformat The chosen pixel format
-//  * @return true if successful, false on error
-//  */
-// bool glInitConfig(SDL_WindowData *impl, int *pformat)
-// {
-//     EGLConfig egl_conf = (EGLConfig)0;
-//     EGLConfig *egl_configs;
-//     EGLint egl_num_configs;
-//     EGLBoolean rc;
-//     struct DummyConfig dummyconfig = {};
+    if (_this->egl_data->egl_display == EGL_NO_DISPLAY) {
+        return false;
+    }
 
-//     // Determine the number of configurations.
-//     rc = eglGetConfigs(egl_disp, NULL, 0, &egl_num_configs);
-//     if (rc != EGL_TRUE) {
-//         return false;
-//     }
+    // Determine the number of configurations.
+    rc = _this->egl_data->eglChooseConfig(
+        _this->egl_data->egl_display,
+        (const EGLint []) { EGL_NONE },
+        NULL, 0, &egl_num_configs);
+    if (rc != EGL_TRUE) {
+        return false;
+    }
 
-//     if (egl_num_configs == 0) {
-//         return false;
-//     }
+    if (egl_num_configs == 0) {
+        return false;
+    }
 
-//     // Allocate enough memory for all configurations.
-//     egl_configs = SDL_malloc(egl_num_configs * sizeof(*egl_configs));
-//     if (!egl_configs) {
-//         return false;
-//     }
+    // Allocate enough memory for all configurations.
+    egl_configs = SDL_malloc(egl_num_configs * sizeof(*egl_configs));
+    if (!egl_configs) {
+        return false;
+    }
 
-//     // Get the list of configurations.
-//     rc = eglGetConfigs(egl_disp, egl_configs, egl_num_configs,
-//                        &egl_num_configs);
-//     if (rc != EGL_TRUE) {
-//         SDL_free(egl_configs);
-//         return false;
-//     }
+    // Get the list of configurations.
+    rc = _this->egl_data->eglChooseConfig(
+        _this->egl_data->egl_display,
+        (const EGLint []) { EGL_NONE },
+        egl_configs, egl_num_configs, &egl_num_configs);
+    if (rc != EGL_TRUE) {
+        SDL_free(egl_configs);
+        return false;
+    }
 
-//     dummyconfig = getDummyConfigFromScreenSettings(*pformat);
-//     egl_conf = chooseConfig(dummyconfig, egl_configs, egl_num_configs);
-//     *pformat = chooseFormat(egl_conf);
+    dummyconfig = getDummyConfigFromScreenSettings(*pformat);
+    _this->egl_data->egl_config = chooseConfig(_this, dummyconfig, egl_configs, egl_num_configs);
+    *pformat = chooseFormat(_this, _this->egl_data->egl_config);
 
-//     SDL_free(egl_configs);
-//     impl->conf = egl_conf;
+    SDL_free(egl_configs);
 
-//     return true;
-// }
+    return true;
+}
 
 /**
  * Initializes the EGL library.

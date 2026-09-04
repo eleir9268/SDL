@@ -238,9 +238,9 @@ static bool QNX_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_Pro
 
     // Create window buffer(s).
     if (window->flags & SDL_WINDOW_OPENGL) {
-        // if (!glInitConfig(impl, &format)) {
-        //     goto fail;
-        // }
+        if (!glInitConfig(_this, impl, &format)) {
+            goto fail;
+        }
 
         numbufs = 2;
 
