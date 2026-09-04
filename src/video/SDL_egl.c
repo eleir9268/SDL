@@ -1292,11 +1292,11 @@ EGLSurface SDL_EGL_CreateSurface(SDL_VideoDevice *_this, SDL_Window *window, Nat
     ANativeWindow_setBuffersGeometry(nw, 0, 0, format_wanted);
 #endif
 
-#ifdef SDL_VIDEO_DRIVER_QNX
-    // Under screen, dual-buffered is not automatic.
-    attribs[attr++] = EGL_RENDER_BUFFER;
-    attribs[attr++] = EGL_BACK_BUFFER;
-#endif
+// #ifdef SDL_VIDEO_DRIVER_QNX
+//     // Under screen, dual-buffered is not automatic.
+//     attribs[attr++] = EGL_RENDER_BUFFER;
+//     attribs[attr++] = EGL_BACK_BUFFER;
+// #endif
 
 #ifdef EGL_KHR_gl_colorspace
     if (SDL_EGL_HasExtension(_this, SDL_EGL_DISPLAY_EXTENSION, "EGL_KHR_gl_colorspace")) {

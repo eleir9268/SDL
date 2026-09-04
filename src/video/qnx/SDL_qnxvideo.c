@@ -242,11 +242,6 @@ static bool QNX_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_Pro
         //     goto fail;
         // }
 
-        impl->egl_surface = SDL_EGL_CreateSurface(_this, window, (NativeWindowType)impl->window);
-        if (impl->egl_surface == EGL_NO_SURFACE) {
-            goto fail;
-        }
-
         SDL_SetPointerProperty(SDL_GetWindowProperties(window), SDL_PROP_WINDOW_QNX_SURFACE_POINTER, impl->egl_surface);
 
         numbufs = 2;
@@ -256,6 +251,12 @@ static bool QNX_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_Pro
                                           &usage) < 0) {
             goto fail;
         }
+
+        impl->egl_surface = SDL_EGL_CreateSurface(_this, window, (NativeWindowType)impl->window);
+        if (impl->egl_surface == EGL_NO_SURFACE) {
+            goto fail;
+        }
+
     } else {
         numbufs = 1;
     }
