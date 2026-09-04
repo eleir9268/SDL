@@ -242,8 +242,6 @@ static bool QNX_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_Pro
         //     goto fail;
         // }
 
-        SDL_SetPointerProperty(SDL_GetWindowProperties(window), SDL_PROP_WINDOW_QNX_SURFACE_POINTER, impl->egl_surface);
-
         numbufs = 2;
 
         usage = SCREEN_USAGE_OPENGL_ES2 | SCREEN_USAGE_OPENGL_ES3;
@@ -251,12 +249,6 @@ static bool QNX_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_Pro
                                           &usage) < 0) {
             goto fail;
         }
-
-        impl->egl_surface = SDL_EGL_CreateSurface(_this, window, (NativeWindowType)impl->window);
-        if (impl->egl_surface == EGL_NO_SURFACE) {
-            goto fail;
-        }
-
     } else {
         numbufs = 1;
     }
@@ -279,6 +271,15 @@ static bool QNX_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_Pro
     // Create buffer(s).
     if (screen_create_window_buffers(impl->window, numbufs>0?numbufs:1) < 0) {
         goto fail;
+    }
+
+    // Initialize EGL surface.
+    if (window->flags & SDL_WINDOW_OPENGL) {
+        impl->egl_surface = SDL_EGL_CreateSurface(_this, window, (NativeWindowType)impl->window);
+        if (impl->egl_surface == EGL_NO_SURFACE) {
+            goto fail;
+        }
+        SDL_SetPointerProperty(SDL_GetWindowProperties(window), SDL_PROP_WINDOW_QNX_SURFACE_POINTER, impl->egl_surface);
     }
 
     // Get initial focus state. Fallback to true.
