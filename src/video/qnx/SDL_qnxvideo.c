@@ -377,7 +377,6 @@ static bool QNX_UpdateWindowFramebuffer(SDL_VideoDevice *_this, SDL_Window *wind
 static SDL_FullscreenResult QNX_SetWindowFullscreen(SDL_VideoDevice *_this, SDL_Window *window, SDL_VideoDisplay *display, SDL_FullscreenOp fullscreen)
 {
     SDL_WindowData *window_data = window->internal;
-    SDL_DisplayData *display_data = display->internal;
     int size[2] = { 0, 0 };
     int position[2] = { 0, 0 };
 
