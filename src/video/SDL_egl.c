@@ -1275,9 +1275,6 @@ EGLSurface SDL_EGL_CreateSurface(SDL_VideoDevice *_this, SDL_Window *window, Nat
     EGLint format_wanted;
     EGLint format_got;
 #endif
-#ifdef SDL_VIDEO_DRIVER_QNX
-    int format;
-#endif
     // max 16 key+value pairs, plus terminator.
     EGLint attribs[33];
     int attr = 0;
@@ -1300,11 +1297,14 @@ EGLSurface SDL_EGL_CreateSurface(SDL_VideoDevice *_this, SDL_Window *window, Nat
 #endif
 
 #ifdef SDL_VIDEO_DRIVER_QNX
-    format = QNX_ChooseFormat(_this, _this->egl_data->egl_config);
+    // Wayland is also a supported platform on QNX, so we need to be specific.
+    if (SDL_strcmp(_this.name, "qnx") == 0) {
+        int format = QNX_ChooseFormat(_this, _this->egl_data->egl_config);
 
-    if (screen_set_window_property_iv(nw, SCREEN_PROPERTY_FORMAT,
-                                      &format) < 0) {
-        return EGL_NO_SURFACE;
+        if (screen_set_window_property_iv(nw, SCREEN_PROPERTY_FORMAT,
+                                          &format) < 0) {
+            return EGL_NO_SURFACE;
+        }
     }
 #endif
 
