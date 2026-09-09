@@ -86,7 +86,11 @@ static snd_pcm_state_t (*ALSA_snd_pcm_state)(snd_pcm_t *);
 static int (*ALSA_snd_device_name_hint)(int, const char *, void ***);
 static char *(*ALSA_snd_device_name_get_hint)(const void *, const char *);
 static int (*ALSA_snd_device_name_free_hint)(void **);
+#ifndef SDL_PLATFORM_QNXNTO
 static snd_pcm_sframes_t (*ALSA_snd_pcm_avail)(snd_pcm_t *);
+#else
+static int32_t (*ALSA_snd_pcm_avail_delay)(snd_pcm_t *, snd_pcm_sframes_t *, snd_pcm_sframes_t *);
+#endif
 static size_t (*ALSA_snd_ctl_card_info_sizeof)(void);
 static size_t (*ALSA_snd_pcm_info_sizeof)(void);
 static int (*ALSA_snd_card_next)(int *);
@@ -176,7 +180,11 @@ static bool load_alsa_syms(void)
     SDL_ALSA_SYM(snd_device_name_hint);
     SDL_ALSA_SYM(snd_device_name_get_hint);
     SDL_ALSA_SYM(snd_device_name_free_hint);
+#ifndef SDL_PLATFORM_QNXNTO
     SDL_ALSA_SYM(snd_pcm_avail);
+#else
+    SDL_ALSA_SYM(snd_pcm_avail_delay);
+#endif
     SDL_ALSA_SYM(snd_ctl_card_info_sizeof);
     SDL_ALSA_SYM(snd_pcm_info_sizeof);
     SDL_ALSA_SYM(snd_card_next);
@@ -1047,12 +1055,16 @@ static int ALSA_pcm_cfg_hw_chans_n_scan(struct ALSA_pcm_cfg_ctx *ctx, unsigned i
         //==========================================================================================
         // Here the alsa pcm is in SND_PCM_STATE_PREPARED state, let's figure out a good fit for
         // SDL channel map, it may request to change the target number of channels though.
+#ifndef SDL_PLATFORM_QNXNTO
         status = alsa_chmap_cfg(ctx);
         if (status < 0) {
             return status; // we forward the SDL error
         } else if (status == CHMAP_INSTALLED) {
             return CHANS_N_CONFIGURED; // we are finished here
         }
+#else
+        return CHANS_N_CONFIGURED;
+#endif
 
         // status == CHANS_N_NEXT
         ALSA_snd_pcm_free_chmaps(ctx->chmap_queries);
