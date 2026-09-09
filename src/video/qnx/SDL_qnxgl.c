@@ -27,9 +27,6 @@
 /**
  * Detertmines the pixel format to use based on the current display and EGL
  * configuration.
- *
- * @param   egl_conf    EGL configuration to use
- * @return  A SCREEN_FORMAT* constant for the pixel format to use
  */
 int QNX_ChooseFormat(SDL_VideoDevice *_this, EGLConfig egl_conf)
 {
@@ -60,9 +57,6 @@ int QNX_ChooseFormat(SDL_VideoDevice *_this, EGLConfig egl_conf)
 
 /**
  * Initializes the EGL library.
- * @param   SDL_VideoDevice *_this
- * @param   egl_path    Path to EGL dll.
- * @return  true if successful, false on error
  */
 bool QNX_GLES_LoadLibrary(SDL_VideoDevice *_this, const char *egl_path)
 {
@@ -71,8 +65,6 @@ bool QNX_GLES_LoadLibrary(SDL_VideoDevice *_this, const char *egl_path)
 
 /**
  * Finds the address of an EGL extension function.
- * @param   proc    Function name
- * @return  Function address
  */
 SDL_FunctionPointer QNX_GLES_GetProcAddress(SDL_VideoDevice *_this, const char *proc)
 {
@@ -82,9 +74,6 @@ SDL_FunctionPointer QNX_GLES_GetProcAddress(SDL_VideoDevice *_this, const char *
 /**
  * Associates the given window with the necessary EGL structures for drawing and
  * displaying content.
- * @param   SDL_VideoDevice *_this
- * @param   window  The SDL window to create the context for
- * @return  A pointer to the created context, if successful, NULL on error
  */
 SDL_GLContext QNX_GLES_CreateContext(SDL_VideoDevice *_this, SDL_Window *window)
 {
@@ -99,9 +88,6 @@ SDL_GLContext QNX_GLES_CreateContext(SDL_VideoDevice *_this, SDL_Window *window)
 
 /**
  * Sets a new value for the number of frames to display before swapping buffers.
- * @param   SDL_VideoDevice *_this
- * @param   interval    New interval value
- * @return  true if successful, false on error
  */
 bool QNX_GLES_SetSwapInterval(SDL_VideoDevice *_this, int interval)
 {
@@ -110,9 +96,6 @@ bool QNX_GLES_SetSwapInterval(SDL_VideoDevice *_this, int interval)
 
 /**
  * Gets the value for the number of frames to display before swapping buffers.
- * @param   SDL_VideoDevice *_this
- * @param   *interval    Interval value
- * @return  true if successful, false on error
  */
 bool QNX_GLES_GetSwapInterval(SDL_VideoDevice *_this, int *interval)
 {
@@ -121,9 +104,6 @@ bool QNX_GLES_GetSwapInterval(SDL_VideoDevice *_this, int *interval)
 
 /**
  * Swaps the EGL buffers associated with the given window
- * @param   SDL_VideoDevice *_this
- * @param   window  Window to swap buffers for
- * @return  true if successful, false on error
  */
 bool QNX_GLES_SwapWindow(SDL_VideoDevice *_this, SDL_Window *window)
 {
@@ -156,8 +136,6 @@ bool QNX_GLES_SwapWindow(SDL_VideoDevice *_this, SDL_Window *window)
 
 /**
  * Destroys a context.
- * @param   SDL_VideoDevice *_this
- * @param   context The context to destroy
  */
 bool QNX_GLES_DeleteContext(SDL_VideoDevice *_this, SDL_GLContext context)
 {
@@ -166,7 +144,6 @@ bool QNX_GLES_DeleteContext(SDL_VideoDevice *_this, SDL_GLContext context)
 
 /**
  * Terminates access to the EGL library.
- * @param   SDL_VideoDevice *_this
  */
 void QNX_GLES_UnloadLibrary(SDL_VideoDevice *_this)
 {

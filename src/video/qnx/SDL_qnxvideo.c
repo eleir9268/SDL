@@ -47,8 +47,6 @@ screen_event_t * getEvent()
  * Initializes the QNX video plugin.
  * Creates the Screen context and event handles used for all window operations
  * by the plugin.
- * @param   SDL_VideoDevice *_this
- * @return  true if successful, false on error
  */
 static bool QNX_VideoInit(SDL_VideoDevice *_this)
 {
@@ -176,9 +174,6 @@ static void QNX_VideoQuit(SDL_VideoDevice *_this)
 /**
  * Creates a new native Screen window and associates it with the given SDL
  * window.
- * @param   SDL_VideoDevice *_this
- * @param   window  SDL window to initialize
- * @return  true if successful, false on error
  */
 static bool QNX_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_PropertiesID create_props)
 {
@@ -302,12 +297,6 @@ fail:
 /**
  * Gets a pointer to the Screen buffer associated with the given window. Note
  * that the buffer is actually created in QNX_CreateWindow().
- * @param       SDL_VideoDevice *_this
- * @param       window  SDL window to get the buffer for
- * @param[out]  pixels  Holds a pointer to the window's buffer
- * @param[out]  format  Holds the pixel format for the buffer
- * @param[out]  pitch   Holds the number of bytes per line
- * @return  true if successful, false on error
  */
 static bool QNX_CreateWindowFramebuffer(SDL_VideoDevice *_this, SDL_Window * window, SDL_PixelFormat * format,
                         void ** pixels, int *pitch)
@@ -346,11 +335,6 @@ static bool QNX_CreateWindowFramebuffer(SDL_VideoDevice *_this, SDL_Window * win
 
 /**
  * Informs the window manager that the window needs to be updated.
- * @param   SDL_VideoDevice *_this
- * @param   window      The window to update
- * @param   rects       An array of reectangular areas to update
- * @param   numrects    Rect array length
- * @return  true if successful, false on error
  */
 static bool QNX_UpdateWindowFramebuffer(SDL_VideoDevice *_this, SDL_Window *window, const SDL_Rect *rects,
                         int numrects)
@@ -468,7 +452,6 @@ static SDL_DisplayID QNX_GetDisplayForWindow(SDL_VideoDevice *_this, SDL_Window 
 
 /**
  * Runs the main event loop.
- * @param   SDL_VideoDevice *_this
  */
 static void QNX_PumpEvents(SDL_VideoDevice *_this)
 {
@@ -526,8 +509,6 @@ static void QNX_PumpEvents(SDL_VideoDevice *_this)
 
 /**
  * Updates the size of the native window using the geometry of the SDL window.
- * @param   SDL_VideoDevice *_this
- * @param   window  SDL window to update
  */
 static void QNX_SetWindowSize(SDL_VideoDevice *_this, SDL_Window *window)
 {
@@ -554,8 +535,6 @@ static void QNX_SetWindowSize(SDL_VideoDevice *_this, SDL_Window *window)
 
 /**
  * Makes the native window associated with the given SDL window visible.
- * @param   SDL_VideoDevice *_this
- * @param   window  SDL window to update
  */
 static void QNX_ShowWindow(SDL_VideoDevice *_this, SDL_Window *window)
 {
@@ -568,8 +547,6 @@ static void QNX_ShowWindow(SDL_VideoDevice *_this, SDL_Window *window)
 
 /**
  * Makes the native window associated with the given SDL window invisible.
- * @param   SDL_VideoDevice *_this
- * @param   window  SDL window to update
  */
 static void QNX_HideWindow(SDL_VideoDevice *_this, SDL_Window *window)
 {
@@ -582,8 +559,6 @@ static void QNX_HideWindow(SDL_VideoDevice *_this, SDL_Window *window)
 
 /**
  * Destroys the native window associated with the given SDL window.
- * @param   SDL_VideoDevice *_this
- * @param   window  SDL window that is being destroyed
  */
 static void QNX_DestroyWindow(SDL_VideoDevice *_this, SDL_Window *window)
 {
@@ -597,7 +572,6 @@ static void QNX_DestroyWindow(SDL_VideoDevice *_this, SDL_Window *window)
 
 /**
  * Frees the plugin object created by createDevice().
- * @param   device  Plugin object to free
  */
 static void QNX_DeleteDevice(SDL_VideoDevice *device)
 {
@@ -606,7 +580,6 @@ static void QNX_DeleteDevice(SDL_VideoDevice *device)
 
 /**
  * Creates the QNX video plugin used by SDL.
- * @return  Initialized device if successful, NULL otherwise
  */
 static SDL_VideoDevice *createDevice(void)
 {
