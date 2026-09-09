@@ -1298,7 +1298,7 @@ EGLSurface SDL_EGL_CreateSurface(SDL_VideoDevice *_this, SDL_Window *window, Nat
 
 #ifdef SDL_VIDEO_DRIVER_QNX
     // Wayland is also a supported platform on QNX, so we need to be specific.
-    if (SDL_strcmp(_this.name, "qnx") == 0) {
+    if (SDL_strcmp(_this->name, "qnx") == 0) {
         int format = QNX_ChooseFormat(_this, _this->egl_data->egl_config);
 
         if (screen_set_window_property_iv(nw, SCREEN_PROPERTY_FORMAT,
