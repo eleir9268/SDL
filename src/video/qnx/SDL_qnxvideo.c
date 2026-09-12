@@ -521,7 +521,7 @@ static void QNX_SetWindowSize(SDL_VideoDevice *_this, SDL_Window *window)
         if (screen_destroy_window_buffers(impl->window) < 0) {
             return;
         }
-        impl->resize = 1;
+        impl->resize = true;
 
         screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_SIZE, size);
         screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_SOURCE_SIZE, size);

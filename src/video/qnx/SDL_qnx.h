@@ -42,7 +42,7 @@ typedef struct SDL_WindowData
     screen_window_t window;
     EGLSurface      egl_surface;
     SDL_GLContext   context;
-    int             resize;
+    bool            resize;
     bool            has_focus;
 } SDL_WindowData;
 

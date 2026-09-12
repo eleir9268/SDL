@@ -127,7 +127,7 @@ bool QNX_GLES_SwapWindow(SDL_VideoDevice *_this, SDL_Window *window)
             }
 
             impl->egl_surface = surface;
-            impl->resize = 0;
+            impl->resize = false;
         }
     }
 
