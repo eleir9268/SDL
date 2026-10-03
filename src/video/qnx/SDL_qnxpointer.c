@@ -43,22 +43,29 @@ static Uint8 screenToMouseButton(int x)
 
 void handlePointerEvent(screen_event_t event)
 {
+    int              flags = 0;
     int              buttons = 0;
     int              mouse_wheel = 0;
     int              mouse_h_wheel = 0;
     int              pos[2] = {0,0};
+    int              dis[2] = {0,0};
 
     Uint64           timestamp = SDL_GetTicksNS();
     SDL_Mouse        *mouse;
     SDL_MouseData    *mouse_data;
     SDL_Window       *window;
 
+    mouse = SDL_GetMouse();
+
+    screen_get_event_property_iv(event, SCREEN_PROPERTY_FLAGS, &flags);
+
     screen_get_event_property_iv(event, SCREEN_PROPERTY_BUTTONS, &buttons);
     screen_get_event_property_iv(event, SCREEN_PROPERTY_MOUSE_WHEEL, &mouse_wheel);
     screen_get_event_property_iv(event, SCREEN_PROPERTY_MOUSE_HORIZONTAL_WHEEL, &mouse_h_wheel);
     screen_get_event_property_iv(event, SCREEN_PROPERTY_POSITION, pos);
-
-    mouse = SDL_GetMouse();
+    if (mouse->relative_mode && ((flags & SCREEN_FLAG_DISPLACEMENT_VALID) != 0)) {
+        screen_get_event_property_iv(event, SCREEN_PROPERTY_DISPLACEMENT, dis);
+    }
 
     window = mouse->focus;
     mouse_data = mouse->internal;
@@ -67,7 +74,11 @@ void handlePointerEvent(screen_event_t event)
     if (mouse->relative_mode) {
         // The mouse is hidden. We don't have control over its actual position
         // with SCREEN_PROPERTY_POSITION, just the position of the icon.
-        SDL_SendMouseMotion(timestamp, window, SDL_DEFAULT_MOUSE_ID, true, pos[0] - mouse_data->x_prev, pos[1] - mouse_data->y_prev);
+        if ((flags & SCREEN_FLAG_DISPLACEMENT_VALID) != 0) {
+            SDL_SendMouseMotion(timestamp, window, SDL_DEFAULT_MOUSE_ID, true, dis[0], dis[1]);
+        } else {
+            SDL_SendMouseMotion(timestamp, window, SDL_DEFAULT_MOUSE_ID, true, pos[0] - mouse_data->x_prev, pos[1] - mouse_data->y_prev);
+        }
     } else {
         SDL_SendMouseMotion(timestamp, window, SDL_DEFAULT_MOUSE_ID, false, pos[0], pos[1]);
     }
