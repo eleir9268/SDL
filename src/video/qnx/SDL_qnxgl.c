@@ -60,7 +60,7 @@ int QNX_ChooseFormat(SDL_VideoDevice *_this, EGLConfig egl_conf)
  */
 bool QNX_GLES_LoadLibrary(SDL_VideoDevice *_this, const char *egl_path)
 {
-    return SDL_EGL_LoadLibrary(_this, egl_path, EGL_DEFAULT_DISPLAY);
+    return SDL_EGL_LoadLibrary(_this, egl_path, EGL_DEFAULT_DISPLAY, _this->gl_config.egl_platform);
 }
 
 /**
