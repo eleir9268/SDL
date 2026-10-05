@@ -402,6 +402,7 @@ static SDL_FullscreenResult QNX_SetWindowFullscreen(SDL_VideoDevice *_this, SDL_
         return SDL_FULLSCREEN_FAILED;
     }
 
+    window_data->resize = true;
     SDL_SendWindowEvent(window, fullscreen ? SDL_EVENT_WINDOW_ENTER_FULLSCREEN : SDL_EVENT_WINDOW_LEAVE_FULLSCREEN, 0, 0);
 
     return SDL_FULLSCREEN_SUCCEEDED;
