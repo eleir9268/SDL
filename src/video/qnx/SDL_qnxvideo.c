@@ -587,9 +587,6 @@ static SDL_VideoDevice *createDevice(void)
     device->GetDisplayForWindow = QNX_GetDisplayForWindow;
     device->GetDisplayBounds = QNX_GetDisplayBounds;
     device->GetDisplayModes = QNX_GetDisplayModes;
-#if 0
-    device->SetDisplayMode = QNX_SetDisplayMode;
-#endif
     device->PumpEvents = QNX_PumpEvents;
     device->DestroyWindow = QNX_DestroyWindow;
 
